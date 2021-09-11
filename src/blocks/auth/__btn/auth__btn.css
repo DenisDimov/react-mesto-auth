@@ -1,0 +1,11 @@
+.auth__btn {
+  margin-top: 178px;
+  min-height: 50px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  color: #000000;
+  cursor: pointer;
+}
