@@ -13,6 +13,7 @@ import { CurrentUserContext } from './contexts/CurrentUserContext';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
 
 const App = () => {
   const [isEditProfilePopupOpen, setisEditProfilePopupOpen] = useState(false);
@@ -119,33 +120,41 @@ const App = () => {
     }
   };
 
-  const [loggedIn, setLoggedIn] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const handleLogin = (e) => {
+    // e.preventDefault();
+    setLoggedIn(true)
+  };
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-          <Header />
+          <Header desc={loggedIn ? 'Войти' : 'Регистрация'} />
           <Switch>
-            <Route path="/sign-in">
-              <Login title="Вход" button="Войти"/>
+            <Route exact path="/sign-in">
+              <Login handleLogin={handleLogin} title="Вход" button="Войти" />
             </Route>
             <Route path="/sign-up">
-              <Register title="Регистрация" button="Зарегистрироваться"/>
+              <Register title="Регистрация" button="Зарегистрироваться" />
             </Route>
             <Route exact path="/">
-            {loggedIn ? <Redirect to="/sign-up"/> : <Redirect to="/sign-in"/>}
-          </Route>
+              {loggedIn ? <Redirect to="/main" /> : <Redirect to="/sign-in" />}
+            </Route>
+            <ProtectedRoute
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              onCardClick={setSelectedCard}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+              cards={cards}
+              exact
+              path="/main"
+              loggedIn={loggedIn}
+              component={Main}></ProtectedRoute>
           </Switch>
-          <Main
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardClick={setSelectedCard}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-            cards={cards}
-          />
           <Footer />
           {isEditProfilePopupOpen && (
             <EditProfilePopup
