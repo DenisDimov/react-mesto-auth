@@ -8,4 +8,13 @@
   text-align: center;
   color: #000000;
   cursor: pointer;
+  border-radius: 2px;
+  padding: 0;
+  border: 0;
+  transition: .3s linear;
+}
+
+.auth__btn:hover {
+  background: #ffffff;
+  opacity: 0.85;
 }

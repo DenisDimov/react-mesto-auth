@@ -10,10 +10,12 @@ import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import { CurrentUserContext } from './contexts/CurrentUserContext';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
+import * as Auth from '../utils/Auth';
 
 const App = () => {
   const [isEditProfilePopupOpen, setisEditProfilePopupOpen] = useState(false);
@@ -22,6 +24,11 @@ const App = () => {
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const history = useHistory();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({});
+  const [isInfoTooltip, setIsInfoTooltip] = useState(false);
+  const [statusReg, setStatusReg] = useState('');
 
   useEffect(() => {
     api
@@ -44,6 +51,14 @@ const App = () => {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      tokenCheck(jwt);
+    }
+    // eslint-disable-next-line
+  }, [loggedIn]);
 
   const handleCardLike = (card) => {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
@@ -72,12 +87,14 @@ const App = () => {
   const handleEditProfileClick = () => setisEditProfilePopupOpen(true);
   const handleAddPlaceClick = () => setisAddPlacePopupOpen(true);
   const handleEditAvatarClick = () => setisEditAvatarPopupOpen(true);
+  const handleToolTips = () => setIsInfoTooltip(true);
 
   const closeAllPopups = () => {
     setisEditProfilePopupOpen(false);
     setisAddPlacePopupOpen(false);
     setisEditAvatarPopupOpen(false);
     setSelectedCard(null);
+    setIsInfoTooltip(false);
   };
 
   const handleUpdateUser = (currentUser) => {
@@ -114,30 +131,80 @@ const App = () => {
       });
   };
 
-  const handleEscClosePopup = (e) => {
-    if (e.key === 'Escape') {
-      closeAllPopups();
+  const handleLogin = () => {
+    setLoggedIn(true);
+  };
+
+  const tokenCheck = (jwt) => {
+    if (jwt) {
+      Auth.getContent(jwt)
+        .then((res) => {
+          if (res) {
+            setUserData({
+              email: res.data.email,
+            });
+            handleLogin();
+            history.push('/');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  const signOut = () => {
+    localStorage.removeItem('jwt');
+    setLoggedIn(false);
+    history.push('/sign-in');
+  };
 
-  const handleLogin = (e) => {
-    // e.preventDefault();
-    setLoggedIn(true)
+  const onRegister = (email, password) => {
+    Auth.register(email, password)
+      .then((res) => {
+        if (res.data) {
+          handleToolTips();
+          history.push('/sign-in');
+          setTimeout(closeAllPopups, 2000);
+        } else {
+          setStatusReg('success');
+          handleToolTips();
+          setTimeout(closeAllPopups, 2000);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const onLogin = (email, password) => {
+    Auth.authorize(email, password)
+      .then((data) => {
+        if (data.token) {
+          handleLogin();
+          history.push('/main');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setStatusReg('success');
+        handleToolTips();
+        setTimeout(closeAllPopups, 2000);
+      });
   };
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-          <Header desc={loggedIn ? 'Войти' : 'Регистрация'} />
+          <Header userData={userData} signOut={signOut} />
+          <InfoTooltip isOpen={isInfoTooltip} onClose={closeAllPopups} statusReg={statusReg} />
           <Switch>
             <Route exact path="/sign-in">
-              <Login handleLogin={handleLogin} title="Вход" button="Войти" />
+              <Login handleLogin={handleLogin} title="Вход" button="Войти" onLogin={onLogin} />
             </Route>
-            <Route path="/sign-up">
-              <Register title="Регистрация" button="Зарегистрироваться" />
+            <Route exact path="/sign-up">
+              <Register title="Регистрация" button="Зарегистрироваться" onRegister={onRegister} />
             </Route>
             <Route exact path="/">
               {loggedIn ? <Redirect to="/main" /> : <Redirect to="/sign-in" />}
@@ -161,7 +228,6 @@ const App = () => {
               isOpen={isEditProfilePopupOpen}
               onClose={closeAllPopups}
               onUpdateUser={handleUpdateUser}
-              closePopupEsc={handleEscClosePopup}
             />
           )}
           {isAddPlacePopupOpen && (
@@ -178,12 +244,7 @@ const App = () => {
               onUpdateAvatar={handleUpdateAvatar}
             />
           )}
-          <PopupWithForm
-            name="delete"
-            title="Вы уверены?"
-            onClose={closeAllPopups}
-            closePopupEsc={handleEscClosePopup}
-          />
+          <PopupWithForm name="delete" title="Вы уверены?" onClose={closeAllPopups} />
           {selectedCard && <ImagePopup card={selectedCard} onClose={closeAllPopups} />}
         </div>
       </div>
