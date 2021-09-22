@@ -24,32 +24,28 @@ const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
       title="Новое место"
       isOpen={isOpen}
       onSubmit={handleSubmit}
-      onClose={onClose}>
-      <>
-        <input
-          onChange={handleChangeName}
-          value={name || ''}
-          type="text"
-          id="place"
-          name="place"
-          placeholder="Название"
-          className="form__item form__place popup__input"
-        />
-        <span className="form__input-error" id="place-error"></span>
-        <input
-          onChange={handleChangeLink}
-          value={link || ''}
-          type="url"
-          id="link"
-          name="Link"
-          placeholder="Ссылка на картинку"
-          className="form__item form__link popup__input"
-        />
-        <span className="form__input-error" id="link-error"></span>
-        <button className="form__btn popup__button" id="form-addBtn" type="submit">
-          Сохранить
-        </button>
-      </>
+      onClose={onClose}
+      buttonText="Сохранить">
+      <input
+        onChange={handleChangeName}
+        value={name || ''}
+        type="text"
+        id="place"
+        name="place"
+        placeholder="Название"
+        className="form__item form__place popup__input"
+      />
+      <span className="form__input-error" id="place-error"></span>
+      <input
+        onChange={handleChangeLink}
+        value={link || ''}
+        type="url"
+        id="link"
+        name="Link"
+        placeholder="Ссылка на картинку"
+        className="form__item form__link popup__input"
+      />
+      <span className="form__input-error" id="link-error"></span>
     </PopupWithForm>
   );
 };

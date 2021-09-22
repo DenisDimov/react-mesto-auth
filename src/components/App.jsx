@@ -9,7 +9,7 @@ import api from '../utils/Api';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
-import { CurrentUserContext } from './contexts/CurrentUserContext';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
@@ -166,14 +166,13 @@ const App = () => {
           handleToolTips();
           history.push('/sign-in');
           setTimeout(closeAllPopups, 2000);
-        } else {
-          setStatusReg('success');
-          handleToolTips();
-          setTimeout(closeAllPopups, 2000);
         }
       })
       .catch((err) => {
         console.log(err);
+        setStatusReg('success');
+        handleToolTips();
+        setTimeout(closeAllPopups, 2000);
       });
   };
 
@@ -223,29 +222,23 @@ const App = () => {
               component={Main}></ProtectedRoute>
           </Switch>
           <Footer />
-          {isEditProfilePopupOpen && (
-            <EditProfilePopup
-              isOpen={isEditProfilePopupOpen}
-              onClose={closeAllPopups}
-              onUpdateUser={handleUpdateUser}
-            />
-          )}
-          {isAddPlacePopupOpen && (
-            <AddPlacePopup
-              isOpen={isAddPlacePopupOpen}
-              onClose={closeAllPopups}
-              onAddPlace={handleAddPlaceSubmit}
-            />
-          )}
-          {isEditAvatarPopupOpen && (
-            <EditAvatarPopup
-              isOpen={isEditAvatarPopupOpen}
-              onClose={closeAllPopups}
-              onUpdateAvatar={handleUpdateAvatar}
-            />
-          )}
+          <EditProfilePopup
+            isOpen={isEditProfilePopupOpen}
+            onClose={closeAllPopups}
+            onUpdateUser={handleUpdateUser}
+          />
+          <AddPlacePopup
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onAddPlace={handleAddPlaceSubmit}
+          />
+          <EditAvatarPopup
+            isOpen={isEditAvatarPopupOpen}
+            onClose={closeAllPopups}
+            onUpdateAvatar={handleUpdateAvatar}
+          />
           <PopupWithForm name="delete" title="Вы уверены?" onClose={closeAllPopups} />
-          {selectedCard && <ImagePopup card={selectedCard} onClose={closeAllPopups} />}
+          <ImagePopup card={selectedCard} onClose={closeAllPopups} />
         </div>
       </div>
     </CurrentUserContext.Provider>

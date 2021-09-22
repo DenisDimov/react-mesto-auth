@@ -1,5 +1,5 @@
 import Card from './Card';
-import { CurrentUserContext } from './contexts/CurrentUserContext';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { useContext } from 'react';
 
 

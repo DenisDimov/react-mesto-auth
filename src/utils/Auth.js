@@ -9,9 +9,7 @@ export const register = (email, password) => {
     },
     body: JSON.stringify({ password, email }),
   })
-    .then((response) => {
-      return response.json();
-    })
+    .then((res) => handleResponse(res))
     .catch((err) => console.log(err));
 };
 
@@ -24,7 +22,7 @@ export const authorize = (email, password) => {
     },
     body: JSON.stringify({ email, password }),
   })
-    .then((response) => response.json())
+    .then((res) => handleResponse(res))
     .then((data) => {
       if (data.token) {
         localStorage.setItem('jwt', data.token);
@@ -45,6 +43,14 @@ export const getContent = (token) => {
       Authorization: `Bearer ${token}`,
     },
   })
-    .then((res) => res.json())
+    .then((res) => handleResponse(res))
     .then((data) => data);
+};
+
+const handleResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  } else {
+    return Promise.reject(`Error: ${res.status}`);
+  }
 };
