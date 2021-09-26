@@ -11,7 +11,6 @@
   width: 100%;
   outline: none;
   color: #fff;
-
 }
 
 .auth__input::placeholder {
@@ -22,4 +21,10 @@
 
 .auth__input:focus::placeholder {
   color: transparent;
+}
+
+@media screen and (max-width: 320px) {
+  .auth__input {
+    margin-top: 10px;
+  }
 }

@@ -12,10 +12,16 @@
   }
 }
 
+@media screen and (max-width: 430px) {
+  .header {
+    flex-direction: column;
+  }
+}
+
 @media screen and (max-width: 320px) {
   .header {
     position: relative;
-    width: calc(100% + 38px);
+    width: calc(100% + 23px);
     right: 19px;
   }
 }
