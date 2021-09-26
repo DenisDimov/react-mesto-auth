@@ -56,3 +56,7 @@
 @import url(./blocks/popup/__container/_type_reg/popup__container_type_reg.css);
 @import url(./blocks/popup/__registration/popup__registration.css);
 @import url(./blocks/header/__profile/header__profile.css);
+@import url(./blocks/auth/__btn/_inactive/auth__btn_inactive.css);
+@import url(./blocks/auth/__input-error/auth__input-error.css);
+@import url(./blocks/auth/__input-error/_active/auth__input-error_active.css);
+@import url(./blocks/auth/__input/_type_error/auth__input_type_error.css);

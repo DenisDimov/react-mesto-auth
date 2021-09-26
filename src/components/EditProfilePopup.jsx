@@ -1,32 +1,36 @@
 import PopupWithForm from './PopupWithForm';
-import { useState, useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { useFormWithValidation } from '../hooks/useForm';
 
 const EditProfilePopup = ({ isOpen, onClose, onUpdateUser }) => {
   const currentUser = useContext(CurrentUserContext);
-
-  const [name, setName] = useState();
-  const [description, setDescription] = useState();
+  const { values, setValues, handleChange, errors, isValid, resetForm } = useFormWithValidation();
 
   useEffect(() => {
-    setName(currentUser.name);
-    setDescription(currentUser.about);
+    resetForm();
+  }, [isOpen, resetForm]);
+
+  useEffect(() => {
+    setValues({
+      ...values,
+      name: currentUser.name,
+      description: currentUser.about,
+    });
+    // eslint-disable-next-line
   }, [currentUser, isOpen]);
-
-  const handleChangeName = (e) => setName(e.target.value);
-
-  const handleChangeDescription = (e) => setDescription(e.target.value);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onUpdateUser({
-      name: name,
-      about: description,
+      name: values.name,
+      about: values.description,
     });
   };
 
   return (
     <PopupWithForm
+      isDisabled={!isValid}
       onSubmit={handleSubmit}
       name="edit"
       title="Редактировать профиль"
@@ -34,21 +38,37 @@ const EditProfilePopup = ({ isOpen, onClose, onUpdateUser }) => {
       onClose={onClose}
       buttonText="Сохранить">
       <input
-        onChange={handleChangeName}
-        value={name || ''}
+        required
+        minLength="2"
+        onChange={handleChange}
+        id="name"
+        name="name"
+        value={values.name || ''}
         type="text"
         placeholder="Имя"
-        className="form__item form__name popup__input"
+        className={`form__item popup__input ${errors.name && 'popup__input_type_error'}`}
       />
-      <span className="form__input-error" id="name-error"></span>
+      <span
+        className={`form__input-error ${errors.name && 'form__input-error_active'}`}
+        id="name-error">
+        {errors.name}
+      </span>
       <input
-        onChange={handleChangeDescription}
-        value={description || ''}
+        minLength="2"
+        required
+        onChange={handleChange}
+        id="job"
+        name="description"
+        value={values.description || ''}
         type="text"
         placeholder="Вид деятельности"
-        className="form__item form__job popup__input"
+        className={`form__item popup__input ${errors.description && 'popup__input_type_error'}`}
       />
-      <span className="form__input-error" id="job-error"></span>
+      <span
+        className={`form__input-error ${errors.description && 'form__input-error_active'}`}
+        id="job-error">
+        {errors.description}
+      </span>
     </PopupWithForm>
   );
 };

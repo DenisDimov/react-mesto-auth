@@ -1,25 +1,25 @@
 import PopupWithForm from './PopupWithForm';
-import { useState } from 'react';
+import { useFormWithValidation } from '../hooks/useForm';
+import { useEffect } from 'react';
 
 const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
-  const [name, setName] = useState('');
-  const [link, setLink] = useState('');
+  const { values, handleChange, errors, isValid, resetForm } = useFormWithValidation();
 
-  const handleChangeName = (e) => setName(e.target.value);
-  const handleChangeLink = (e) => setLink(e.target.value);
+  useEffect(() => {
+    resetForm()
+  }, [isOpen, resetForm])
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onAddPlace({
-      name: name,
-      link: link,
+      name: values.place,
+      link: values.Link,
     });
-    setName('');
-    setLink('');
   };
 
   return (
     <PopupWithForm
+      isDisabled={!isValid}
       name="new-card"
       title="Новое место"
       isOpen={isOpen}
@@ -27,25 +27,33 @@ const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
       onClose={onClose}
       buttonText="Сохранить">
       <input
-        onChange={handleChangeName}
-        value={name || ''}
+        onChange={handleChange}
+        required
+        minLength='2'
+        maxLength='30'
+        value={values.place || ''}
         type="text"
-        id="place"
+        id="place-name"
         name="place"
         placeholder="Название"
-        className="form__item form__place popup__input"
+        className={`form__item popup__input ${errors.place && 'popup__input_type_error'}`}
       />
-      <span className="form__input-error" id="place-error"></span>
+      <span className={`form__input-error ${errors.place && 'form__input-error_active'}`} id="place-name-error">
+        {errors.place}
+      </span>
       <input
-        onChange={handleChangeLink}
-        value={link || ''}
+        onChange={handleChange}
+        required
+        value={values.Link || ''}
         type="url"
-        id="link"
+        id="place-link"
         name="Link"
         placeholder="Ссылка на картинку"
-        className="form__item form__link popup__input"
+        className={`form__item popup__input ${errors.Link && 'popup__input_type_error'}`}
       />
-      <span className="form__input-error" id="link-error"></span>
+      <span className={`form__input-error ${errors.Link && 'form__input-error_active'}`} id="place-link-error">
+        {errors.Link}
+      </span>
     </PopupWithForm>
   );
 };

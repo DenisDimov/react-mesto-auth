@@ -192,18 +192,41 @@ const App = () => {
       });
   };
 
+  useEffect(() => {
+    const handleCloseByOverlay = (e) => {
+      if (e.target.classList.contains('popup')) {
+        closeAllPopups();
+      }
+    };
+    document.addEventListener('mousedown', handleCloseByOverlay);
+    return () => document.removeEventListener('mousedown', handleCloseByOverlay);
+  });
+
+  useEffect(() => {
+    const handleCloseByEscape = (e) => {
+      if (e.key === 'Escape') {
+        closeAllPopups();
+      }
+    };
+
+    document.addEventListener('keyup', handleCloseByEscape);
+    return () => document.removeEventListener('keyup', handleCloseByEscape);
+  }, []);
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
           <Header userData={userData} signOut={signOut} />
-          <InfoTooltip isOpen={isInfoTooltip} onClose={closeAllPopups} statusReg={statusReg} />
+          {isInfoTooltip && (
+            <InfoTooltip isOpen={isInfoTooltip} onClose={closeAllPopups} statusReg={statusReg} />
+          )}
           <Switch>
             <Route exact path="/sign-in">
               <Login handleLogin={handleLogin} title="Вход" button="Войти" onLogin={onLogin} />
             </Route>
             <Route exact path="/sign-up">
-              <Register title="Регистрация" button="Зарегистрироваться" onRegister={onRegister} />
+              <Register title="Регистрация" button="Зарегистрироваться" onRegister={onRegister}/>
             </Route>
             <Route exact path="/">
               {loggedIn ? <Redirect to="/main" /> : <Redirect to="/sign-in" />}

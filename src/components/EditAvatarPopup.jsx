@@ -1,31 +1,44 @@
+import { useEffect } from 'react';
+import { useFormWithValidation } from '../hooks/useForm';
 import PopupWithForm from './PopupWithForm';
-import { useRef } from 'react';
 
 const EditAvatarPopup = ({ isOpen, onClose, onUpdateAvatar }) => {
-  const avatarRef = useRef();
+  const { values, handleChange, errors, isValid, resetForm } = useFormWithValidation();
+
+  useEffect(() => {
+    resetForm()
+  }, [isOpen, resetForm])
 
   const HandleSubmit = (e) => {
     e.preventDefault();
     onUpdateAvatar({
-      avatar: avatarRef.current.value,
+      avatar: values.url,
     });
-    e.currentTarget.reset();
   };
 
   return (
     <PopupWithForm
       onSubmit={HandleSubmit}
       title="Обновить аватар"
+      isDisabled={!isValid}
       isOpen={isOpen}
       onClose={onClose}
       buttonText="Сохранить">
       <input
-        ref={avatarRef}
+        onChange={handleChange}
+        required
+        name="url"
+        id="avatar"
+        value={values.url || ''}
         type="url"
         placeholder="Название"
-        className="form__item popup__input popup__avatar"
+        className={`form__item popup__input ${errors.url && 'popup__input_type_error'}`}
       />
-      <span className="form__input-error" id="avatar-error"></span>
+      <span
+        className={`form__input-error ${errors.url && 'form__input-error_active'}`}
+        id="avatar-error">
+        {errors.url}
+      </span>
     </PopupWithForm>
   );
 };
