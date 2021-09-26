@@ -60,3 +60,4 @@
 @import url(./blocks/auth/__input-error/auth__input-error.css);
 @import url(./blocks/auth/__input-error/_active/auth__input-error_active.css);
 @import url(./blocks/auth/__input/_type_error/auth__input_type_error.css);
+@import url(./blocks/header/__burger/header__burger.css);

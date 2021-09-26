@@ -18,10 +18,11 @@ const Header = ({ userData, signOut }) => {
         </Link>
       </Route>
       <Route exact path="/main">
-        <p className="header__profile">{email}</p>
+        {/* <p className="header__profile">{email}</p>
         <button onClick={signOut} className="header__title">
           Выйти
-        </button>
+        </button> */}
+        <div className='header__burger'></div>
       </Route>
     </header>
   );
