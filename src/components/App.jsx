@@ -35,7 +35,6 @@ const App = () => {
     setIsLoader(true);
     api
       .getInitialCards()
-
       .then((res) => {
         setCards(res);
       })

@@ -1,7 +1,7 @@
 import success from '../image/success.png';
 import fail from '../image/fail.png';
 
-const InfoTooltip = ({ isOpen, onClose, statusReg, statusLogin }) => {
+const InfoTooltip = ({ isOpen, onClose, statusReg }) => {
   return (
     <div className={`popup ${isOpen ? `popup_opened` : ''}`}>
       <div className="popup__container popup__container_type_reg">
