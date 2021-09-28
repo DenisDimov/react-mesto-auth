@@ -29,15 +29,21 @@ const App = () => {
   const [userData, setUserData] = useState({});
   const [isInfoTooltip, setIsInfoTooltip] = useState(false);
   const [statusReg, setStatusReg] = useState('');
+  const [isLoader, setIsLoader] = useState(false);
 
   useEffect(() => {
+    setIsLoader(true);
     api
       .getInitialCards()
+
       .then((res) => {
         setCards(res);
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setIsLoader(false);
       });
   }, []);
 
@@ -226,7 +232,7 @@ const App = () => {
               <Login handleLogin={handleLogin} title="Вход" button="Войти" onLogin={onLogin} />
             </Route>
             <Route exact path="/sign-up">
-              <Register title="Регистрация" button="Зарегистрироваться" onRegister={onRegister}/>
+              <Register title="Регистрация" button="Зарегистрироваться" onRegister={onRegister} />
             </Route>
             <Route exact path="/">
               {loggedIn ? <Redirect to="/main" /> : <Redirect to="/sign-in" />}
@@ -238,6 +244,7 @@ const App = () => {
               onCardClick={setSelectedCard}
               onCardLike={handleCardLike}
               onCardDelete={handleCardDelete}
+              isLoader={isLoader}
               cards={cards}
               exact
               path="/main"
